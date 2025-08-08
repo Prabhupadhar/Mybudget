@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Excel Budget Planner</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Clean Professional Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <div class="header-section">
+                    <h1 class="app-title">Professional Budget Planner</h1>
+                    <p class="app-subtitle">Excel-powered financial management</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn--primary" id="add-transaction-btn">+ Add Transaction</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Clean Navigation Tabs -->
+        <nav class="navigation">
+            <div class="nav-container">
+                <button class="nav-tab active" data-tab="dashboard">
+                    <span class="tab-icon">📊</span>
+                    Dashboard
+                </button>
+                <button class="nav-tab" data-tab="transactions">
+                    <span class="tab-icon">📋</span>
+                    Transactions
+                </button>
+                <button class="nav-tab" data-tab="budget">
+                    <span class="tab-icon">💰</span>
+                    Budget Planning
+                </button>
+                <button class="nav-tab" data-tab="reports">
+                    <span class="tab-icon">📈</span>
+                    Reports
+                </button>
+            </div>
+        </nav>
+
+        <!-- Dashboard Tab -->
+        <main class="main-content">
+            <div id="dashboard" class="content-section active">
+                <div class="container">
+                    <div class="section-header">
+                        <h2>Financial Dashboard</h2>
+                        <p class="section-description">Overview of your financial health and key metrics</p>
+                    </div>
+                    
+                    <!-- Dashboard Cards -->
+                    <div class="dashboard-grid">
+                        <div class="metric-card income-card">
+                            <div class="metric-header">
+                                <div class="metric-icon">💰</div>
+                                <div class="metric-label">Total Income</div>
+                            </div>
+                            <div class="metric-value" id="total-income">₹0</div>
+                            <div class="metric-change positive">+12.5% from last month</div>
+                        </div>
+                        <div class="metric-card expense-card">
+                            <div class="metric-header">
+                                <div class="metric-icon">💸</div>
+                                <div class="metric-label">Total Expenses</div>
+                            </div>
+                            <div class="metric-value" id="total-expenses">₹0</div>
+                            <div class="metric-change negative">+8.2% from last month</div>
+                        </div>
+                        <div class="metric-card balance-card">
+                            <div class="metric-header">
+                                <div class="metric-icon">📈</div>
+                                <div class="metric-label">Net Balance</div>
+                            </div>
+                            <div class="metric-value" id="current-balance">₹0</div>
+                            <div class="metric-change positive">+18.7% from last month</div>
+                        </div>
+                    </div>
+
+                    <!-- Charts Section -->
+                    <div class="charts-section">
+                        <div class="chart-container">
+                            <div class="chart-header">
+                                <h3>Monthly Overview</h3>
+                                <p>Income vs expenses over the last 6 months</p>
+                            </div>
+                            <div class="chart-wrapper" style="position: relative; height: 350px;">
+                                <canvas id="monthly-overview-chart"></canvas>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <div class="chart-header">
+                                <h3>Spending Distribution</h3>
+                                <p>Breakdown of expenses by category</p>
+                            </div>
+                            <div class="chart-wrapper" style="position: relative; height: 350px;">
+                                <canvas id="category-pie-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Budget Summary Table -->
+                    <div class="data-table-container">
+                        <div class="table-header">
+                            <h3>Budget Summary</h3>
+                            <p>Track your spending against budget limits</p>
+                        </div>
+                        <div class="table-wrapper">
+                            <table class="data-table" id="dashboard-summary">
+                                <thead>
+                                    <tr>
+                                        <th>Category</th>
+                                        <th>Budget</th>
+                                        <th>Spent</th>
+                                        <th>Remaining</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="dashboard-summary-body">
+                                    <!-- Summary data will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transactions Tab -->
+            <div id="transactions" class="content-section">
+                <div class="container">
+                    <div class="section-header">
+                        <h2>Transaction Management</h2>
+                        <p class="section-description">View, edit, and manage all your financial transactions</p>
+                    </div>
+                    
+                    <div class="filters-section">
+                        <div class="search-container">
+                            <input type="text" class="form-control search-input" placeholder="Search transactions..." id="search-input">
+                        </div>
+                        <div class="filter-controls">
+                            <select class="form-control" id="category-filter">
+                                <option value="">All Categories</option>
+                            </select>
+                            <select class="form-control" id="type-filter">
+                                <option value="">All Types</option>
+                                <option value="income">Income</option>
+                                <option value="expense">Expense</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="data-table-container">
+                        <div class="table-wrapper">
+                            <table class="data-table" id="transactions-table">
+                                <thead>
+                                    <tr>
+                                        <th class="row-number">#</th>
+                                        <th>Date</th>
+                                        <th>Type</th>
+                                        <th>Category</th>
+                                        <th>Description</th>
+                                        <th>Amount</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="transactions-table-body">
+                                    <!-- Transaction data will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Budget Planning Tab -->
+            <div id="budget" class="content-section">
+                <div class="container">
+                    <div class="section-header">
+                        <div>
+                            <h2>Budget Planning</h2>
+                            <p class="section-description">Set and monitor spending limits for different categories</p>
+                        </div>
+                        <button class="btn btn--secondary" id="edit-budget-btn">Edit Budget Limits</button>
+                    </div>
+                    
+                    <div class="budget-grid" id="budget-planning-grid">
+                        <!-- Budget items will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reports Tab -->
+            <div id="reports" class="content-section">
+                <div class="container">
+                    <div class="section-header">
+                        <h2>Financial Reports & Analytics</h2>
+                        <p class="section-description">Detailed insights and trends in your financial data</p>
+                    </div>
+                    
+                    <div class="reports-section">
+                        <div class="chart-container">
+                            <div class="chart-header">
+                                <h3>Expense Trends</h3>
+                                <p>Monthly expense patterns over time</p>
+                            </div>
+                            <div class="chart-wrapper" style="position: relative; height: 400px;">
+                                <canvas id="expense-trends-chart"></canvas>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <div class="chart-header">
+                                <h3>Income vs Expenses</h3>
+                                <p>Comparison of income and expenses over time</p>
+                            </div>
+                            <div class="chart-wrapper" style="position: relative; height: 400px;">
+                                <canvas id="income-expense-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="insights-section" id="financial-insights">
+                        <!-- Financial insights will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Clean Transaction Modal -->
+    <div class="modal hidden" id="transaction-modal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Add New Transaction</h3>
+                <button class="modal-close" id="close-modal">×</button>
+            </div>
+            <form id="transaction-form" class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Transaction Type</label>
+                    <select class="form-control" id="transaction-type" required>
+                        <option value="">Select Type</option>
+                        <option value="income">Income</option>
+                        <option value="expense">Expense</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Category</label>
+                    <select class="form-control" id="transaction-category" required>
+                        <option value="">Select Category</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Amount (₹)</label>
+                    <input type="number" class="form-control" id="transaction-amount" min="0" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <input type="text" class="form-control" id="transaction-description" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Date</label>
+                    <input type="date" class="form-control" id="transaction-date" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn--outline" id="cancel-btn">Cancel</button>
+                    <button type="submit" class="btn btn--primary">Save Transaction</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Budget Edit Modal -->
+    <div class="modal hidden" id="budget-modal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Budget Limits</h3>
+                <button class="modal-close" id="close-budget-modal">×</button>
+            </div>
+            <form id="budget-form" class="modal-body">
+                <div id="budget-inputs">
+                    <!-- Budget inputs will be populated here -->
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn--outline" id="cancel-budget-btn">Cancel</button>
+                    <button type="submit" class="btn btn--primary">Save Budget</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
