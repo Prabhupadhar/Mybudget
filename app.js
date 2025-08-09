@@ -15,6 +15,7 @@ class FinanceTracker {
             'Debt Payments',
             'Savings',
             'Other Expenses'
+            'House EMI'
         ];
         
         this.paymentMethods = ['Cash', 'Card', 'UPI', 'Bank Transfer', 'Other'];
