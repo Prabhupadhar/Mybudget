@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Finance Tracker</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- External Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1 class="app-title">FinanceTracker</h1>
+                <button id="theme-toggle" class="btn btn--outline btn--sm">
+                    <span id="theme-icon">🌙</span>
+                </button>
+            </div>
+            <nav class="sidebar-nav">
+                <button class="nav-item active" data-tab="dashboard">
+                    📊 Dashboard
+                </button>
+                <button class="nav-item" data-tab="add-transaction">
+                    ➕ Add Transaction
+                </button>
+                <button class="nav-item" data-tab="transactions">
+                    📋 Transactions
+                </button>
+                <button class="nav-item" data-tab="analytics">
+                    📈 Analytics
+                </button>
+                <button class="nav-item" data-tab="export">
+                    📤 Export
+                </button>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Tab -->
+            <div id="dashboard" class="tab-content active">
+                <div class="tab-header">
+                    <h2>Financial Dashboard</h2>
+                    <div class="header-actions">
+                        <button id="load-sample-btn" class="btn btn--secondary btn--sm">Load Sample Data</button>
+                        <button id="clear-data-btn" class="btn btn--outline btn--sm">Clear All Data</button>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <!-- Summary Cards -->
+                    <div class="summary-cards">
+                        <div class="summary-card income">
+                            <div class="card-icon">💰</div>
+                            <div class="card-content">
+                                <h3>This Month Income</h3>
+                                <p class="card-value" id="monthly-income">₹0</p>
+                            </div>
+                        </div>
+                        <div class="summary-card expenses">
+                            <div class="card-icon">💸</div>
+                            <div class="card-content">
+                                <h3>This Month Expenses</h3>
+                                <p class="card-value" id="monthly-expenses">₹0</p>
+                            </div>
+                        </div>
+                        <div class="summary-card savings">
+                            <div class="card-icon">💵</div>
+                            <div class="card-content">
+                                <h3>This Month Savings</h3>
+                                <p class="card-value" id="monthly-savings">₹0</p>
+                            </div>
+                        </div>
+                        <div class="summary-card health">
+                            <div class="card-icon">❤️</div>
+                            <div class="card-content">
+                                <h3>Financial Health</h3>
+                                <p class="card-value" id="health-score">85/100</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Add Transaction -->
+                    <div class="quick-add-section">
+                        <div class="quick-add-card">
+                            <h3>Quick Add Transaction</h3>
+                            <button id="quick-add-btn" class="btn btn--primary btn--full-width">Add New Transaction</button>
+                        </div>
+                    </div>
+
+                    <!-- Charts Section -->
+                    <div class="charts-section">
+                        <div class="chart-container">
+                            <h3>Expense Categories</h3>
+                            <canvas id="categoryChart"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <h3>Monthly Trends</h3>
+                            <canvas id="trendsChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Recent Transactions -->
+                    <div class="recent-transactions">
+                        <h3>Recent Transactions</h3>
+                        <div id="recent-transactions-list" class="recent-list">
+                            <p class="empty-message">No recent transactions</p>
+                        </div>
+                        <button id="view-all-transactions" class="btn btn--outline btn--sm">View All Transactions</button>
+                    </div>
+
+                    <!-- Quick Insights -->
+                    <div class="quick-insights">
+                        <h3>Financial Insights</h3>
+                        <div id="insights-list" class="insights-list">
+                            <p class="insight-item">Add some transactions to see personalized insights</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add Transaction Tab -->
+            <div id="add-transaction" class="tab-content">
+                <div class="tab-header">
+                    <h2>Add New Transaction</h2>
+                </div>
+
+                <div class="add-transaction-section">
+                    <form id="transaction-form" class="transaction-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="transaction-date">Date *</label>
+                                <input type="date" id="transaction-date" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="transaction-type">Transaction Type *</label>
+                                <div class="radio-group">
+                                    <label class="radio-label">
+                                        <input type="radio" name="transaction-type" value="income" id="type-income">
+                                        <span class="radio-custom"></span>
+                                        Income
+                                    </label>
+                                    <label class="radio-label">
+                                        <input type="radio" name="transaction-type" value="expense" id="type-expense" checked>
+                                        <span class="radio-custom"></span>
+                                        Expense
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="transaction-description">Description *</label>
+                            <input type="text" id="transaction-description" class="form-control" 
+                                   placeholder="e.g., Salary, DMart grocery shopping, Netflix subscription" required>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="transaction-amount">Amount (₹) *</label>
+                                <input type="number" id="transaction-amount" class="form-control" 
+                                       placeholder="0.00" step="0.01" min="0" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="transaction-category">Category *</label>
+                                <select id="transaction-category" class="form-control" required>
+                                    <option value="">Select Category</option>
+                                    <option value="Income">Income</option>
+                                    <option value="Housing & Rent">Housing & Rent</option>
+                                    <option value="Groceries & Food">Groceries & Food</option>
+                                    <option value="Transportation">Transportation</option>
+                                    <option value="Utilities">Utilities</option>
+                                    <option value="Entertainment">Entertainment</option>
+                                    <option value="Healthcare">Healthcare</option>
+                                    <option value="Shopping">Shopping</option>
+                                    <option value="Subscriptions">Subscriptions</option>
+                                    <option value="Debt Payments">Debt Payments</option>
+                                    <option value="Savings">Savings</option>
+                                    <option value="Other Expenses">Other Expenses</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="payment-method">Payment Method</label>
+                            <select id="payment-method" class="form-control">
+                                <option value="Cash">Cash</option>
+                                <option value="Card">Card</option>
+                                <option value="UPI">UPI</option>
+                                <option value="Bank Transfer">Bank Transfer</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="transaction-notes">Notes (Optional)</label>
+                            <textarea id="transaction-notes" class="form-control" rows="3" 
+                                      placeholder="Additional details about this transaction"></textarea>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn--primary">Save Transaction</button>
+                            <button type="button" id="save-and-add-another" class="btn btn--secondary">Save & Add Another</button>
+                            <button type="reset" class="btn btn--outline">Clear Form</button>
+                        </div>
+                    </form>
+
+                    <div id="form-success" class="alert alert-success hidden">
+                        <p>Transaction added successfully!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transactions Tab -->
+            <div id="transactions" class="tab-content">
+                <div class="tab-header">
+                    <h2>All Transactions</h2>
+                    <div class="header-actions">
+                        <input type="text" id="search-transactions" class="form-control" placeholder="Search transactions...">
+                        <select id="category-filter" class="form-control">
+                            <option value="">All Categories</option>
+                        </select>
+                        <select id="payment-filter" class="form-control">
+                            <option value="">All Payment Methods</option>
+                            <option value="Cash">Cash</option>
+                            <option value="Card">Card</option>
+                            <option value="UPI">UPI</option>
+                            <option value="Bank Transfer">Bank Transfer</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="transactions-section">
+                    <div class="transactions-table-container">
+                        <table id="transactions-table" class="transactions-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Description</th>
+                                    <th>Category</th>
+                                    <th>Payment Method</th>
+                                    <th>Amount</th>
+                                    <th>Type</th>
+                                    <th>Notes</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="transactions-tbody">
+                                <tr class="empty-state">
+                                    <td colspan="8">No transactions found. Add your first transaction to get started.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="pagination" class="pagination"></div>
+                </div>
+            </div>
+
+            <!-- Analytics Tab -->
+            <div id="analytics" class="tab-content">
+                <div class="tab-header">
+                    <h2>Financial Analytics</h2>
+                </div>
+
+                <div class="analytics-grid">
+                    <div class="analytics-card">
+                        <h3>Income vs Expenses</h3>
+                        <div class="chart-container">
+                            <canvas id="incomeExpenseChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="analytics-card">
+                        <h3>Balance Over Time</h3>
+                        <div class="chart-container">
+                            <canvas id="balanceChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="analytics-card">
+                        <h3>Top Spending Categories</h3>
+                        <div class="chart-container">
+                            <canvas id="topCategoriesChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="analytics-card">
+                        <h3>Monthly Breakdown</h3>
+                        <div class="chart-container">
+                            <canvas id="monthlyChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="analytics-card">
+                        <h3>Spending Patterns</h3>
+                        <div class="chart-container">
+                            <canvas id="spendingPatternsChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="analytics-card">
+                        <h3>Payment Method Usage</h3>
+                        <div class="chart-container">
+                            <canvas id="paymentMethodChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Export Tab -->
+            <div id="export" class="tab-content">
+                <div class="tab-header">
+                    <h2>Export & Reports</h2>
+                </div>
+
+                <div class="export-section">
+                    <div class="export-options">
+                        <div class="export-card">
+                            <h3>📊 PDF Report</h3>
+                            <p>Generate a comprehensive financial analysis report</p>
+                            <button id="export-pdf-btn" class="btn btn--primary">Generate PDF Report</button>
+                        </div>
+
+                        <div class="export-card">
+                            <h3>📋 CSV Export</h3>
+                            <p>Export transaction data as CSV file for external analysis</p>
+                            <button id="export-csv-btn" class="btn btn--secondary">Export CSV</button>
+                        </div>
+
+                        <div class="export-card">
+                            <h3>📈 Chart Images</h3>
+                            <p>Download charts as image files</p>
+                            <button id="export-charts-btn" class="btn btn--outline">Export Charts</button>
+                        </div>
+                    </div>
+
+                    <div class="export-summary">
+                        <h3>Export Summary</h3>
+                        <div id="export-stats" class="export-stats">
+                            <p>Total Transactions: <span id="total-transactions-count">0</span></p>
+                            <p>Date Range: <span id="date-range">No data</span></p>
+                            <p>Categories: <span id="categories-count">0</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div id="edit-transaction-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Transaction</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Date</label>
+                    <input type="date" id="edit-date" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <input type="text" id="edit-description" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Category</label>
+                    <select id="edit-category" class="form-control"></select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Amount</label>
+                    <input type="number" id="edit-amount" class="form-control" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Payment Method</label>
+                    <select id="edit-payment-method" class="form-control">
+                        <option value="Cash">Cash</option>
+                        <option value="Card">Card</option>
+                        <option value="UPI">UPI</option>
+                        <option value="Bank Transfer">Bank Transfer</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Notes</label>
+                    <textarea id="edit-notes" class="form-control" rows="3"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="save-transaction-btn" class="btn btn--primary">Save Changes</button>
+                <button class="modal-close btn btn--outline">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Notification -->
+    <div id="notification" class="notification hidden">
+        <div class="notification-content">
+            <span id="notification-text">Success!</span>
+            <button class="notification-close">&times;</button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
