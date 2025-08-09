@@ -1,3 +1,33 @@
+/* =====================================
+   THEME VARIABLES
+   ===================================== */
+:root {
+  /* Light Theme (default) */
+  --bg-color: #ffffff;
+  --text-color: #000000;
+  --card-bg: #f5f5f5;
+  --header-bg: #e0e0e0;
+  --accent-color: #4cafef;
+}
+
+[data-theme="dark"] {
+  /* Dark Theme */
+  --bg-color: #1e1e1e;
+  --text-color: #ffffff;
+  --card-bg: #2a2a2a;
+  --header-bg: #333333;
+  --accent-color: #81d4fa;
+}
+
+/* Apply them globally */
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+.excel-card {
+  background-color: var(--card-bg);
+}
+
 :root {
   /* Primitive Color Tokens */
   --color-white: rgba(255, 255, 255, 1);
